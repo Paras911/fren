@@ -126,7 +126,7 @@
       addMessage("user", text);
       input.value = "";
 
-      fetch("https://a69bac672f8d.ngrok-free.app /chat", {
+      fetch("https://a69bac672f8d.ngrok-free.app/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ user_id: "user1", message: text })
