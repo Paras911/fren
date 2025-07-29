@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Fren</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: "Segoe UI", sans-serif;
+      background-color: #121212;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    header {
+      padding: 16px;
+      background-color: #1f1f1f;
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #64b5f6;
+      border-bottom: 1px solid #333;
+    }
+
+    #chat-box {
+      flex: 1;
+      padding: 16px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .message {
+      max-width: 70%;
+      padding: 12px 16px;
+      margin: 8px 0;
+      border-radius: 16px;
+      line-height: 1.5;
+    }
+
+    .user {
+      background-color: #1976d2;
+      color: white;
+      align-self: flex-end;
+      border-bottom-right-radius: 0;
+    }
+
+    .bot {
+      background-color: #2e407d;
+      color: white;
+      align-self: flex-start;
+      border-bottom-left-radius: 0;
+    }
+
+    footer {
+      display: flex;
+      padding: 12px;
+      background-color: #1f1f1f;
+      border-top: 1px solid #333;
+    }
+
+    input {
+      flex: 1;
+      padding: 12px 16px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 999px;
+      background-color: #2c2c2c;
+      color: white;
+      margin-right: 8px;
+      outline: none;
+    }
+
+    button {
+      padding: 12px 20px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 999px;
+      background-color: #64b5f6;
+      color: #000;
+      cursor: pointer;
+      transition: background-color 0.2s ease-in-out;
+    }
+
+    button:hover {
+      background-color: #90caf9;
+    }
+
+  </style>
+</head>
+<body>
+
+  <header>💬 Hi Fren </header>
+
+  <div id="chat-box"></div>
+
+  <footer>
+    <input type="text" id="message" placeholder="Type a message..." onkeypress="handleKey(event)" />
+    <button onclick="sendMessage()">Send</button>
+  </footer>
+
+  <script>
+    const chatBox = document.getElementById("chat-box");
+
+    function addMessage(role, content) {
+      const msg = document.createElement("div");
+      msg.classList.add("message", role);
+      msg.textContent = content;
+      chatBox.appendChild(msg);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function sendMessage() {
+      const input = document.getElementById("message");
+      const text = input.value.trim();
+      if (!text) return;
+
+      addMessage("user", text);
+      input.value = "";
+
+      fetch("https://aca9a09a0427.ngrok-free.app/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ user_id: "user1", message: text })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.response) {
+          addMessage("bot", data.response);
+        } else {
+          addMessage("bot", "Something went wrong.");
+        }
+      })
+      .catch(() => addMessage("bot", "Error connecting to Fren."));
+    }
+
+    function handleKey(event) {
+      if (event.key === "Enter") {
+        sendMessage();
+      }
+    }
+  </script>
+
+</body>
+</html>
